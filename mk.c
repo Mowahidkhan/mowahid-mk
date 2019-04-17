@@ -123,3 +123,73 @@ temp->pid,temp->at,temp->st,temp->wt,temp->nut,(temp->nut+temp->wt),((float)temp
      return 0;
  }
  
+ 
+ 
+ void addToReady(struct process * temp)
+ {
+     temp->status='W';
+         temp->q=0;
+         temp->wt=0;
+         updateStatus(temp);
+         struct process *temp1;
+         //printf("%c added to ready",temp->pid);
+         temp1= (struct process *)malloc(sizeof( struct process));
+      temp1->pid=temp->pid;
+      temp1->at=temp->at;
+      temp1->nut=temp->nut;
+      temp1->status=temp->status;
+      temp1->q=temp->q;
+      temp1->wt=temp->wt;
+         //printf("%c added to ready",temp->pid);
+     if(ReadyFront==NULL)
+     {        
+         ReadyFront=temp1;
+         ReadyRear=temp1;
+         ReadyRear->next=NULL;         
+     }else{
+         ReadyRear->next=temp1;
+         ReadyRear=temp1;
+        ReadyRear->next = NULL;
+     }
+ }
+ void updateStatus(struct process * temp)
+ {
+     struct process * temp1;
+     for(temp1=processesF;temp1!=NULL;temp1=temp1->next)
+     { if(temp1->pid==temp->pid){
+         temp1->q=temp->q;
+     temp1->status=temp->status;
+     temp1->wt=temp->wt;
+     temp1->st=temp->st;
+     }}
+ }
+ 
+ struct process * getRunning(int t)
+ {
+     struct process *running;
+     if(ReadyFront!=NULL){
+         running=ReadyFront;
+         running->st=t;
+         updateStatus(running);
+         ReadyFront=ReadyFront->next;
+     }else if(WFront!=NULL)
+     {
+         running=WFront;
+         WFront=WFront->next;
+     }else 
+         running=NULL;
+     
+       return running;
+ }
+ void addToWaiting(struct process * temp)
+ {
+     struct process *temp1;
+         //printf("%c added to ready\n",temp->pid);
+      temp1= (struct process *)malloc(sizeof( struct process));
+      temp1->pid=temp->pid;
+      temp1->at=temp->at;
+      temp1->nut=temp->nut;
+      temp1->status=temp->status;
+      temp1->q=temp->q;
+      temp1->wt=temp->wt;
+      temp1->st=temp->st;
